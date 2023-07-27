@@ -8,5 +8,16 @@
  */
 
 #define macro MAIN() = takes(0) returns(0) {
-   
+    // push the caller address to stack
+    caller              // [addr]
+    
+    // get balance of that address
+    balance             // [bal]
+
+    // store in memory
+    0x00                // [0, bal]
+    mstore              // []
+
+    // return
+    0x20 0x00 return  
 }

@@ -11,7 +11,34 @@
 
 #define function multiply(uint256, uint256) payable returns(uint256)
 
-
 #define macro MAIN() = takes(0) returns(0) {
+    // get the 4-byte function selector
+    0x00 calldataload 0xE0 shr
 
+    // jump to add1 if selector matches
+    __FUNC_SIG(multiply) eq multiply jumpi
+
+    // revert otherwise
+    0x00 0x00 revert
+
+    multiply:
+        // we could write the logic here, but lets use a macro :)
+        MULTIPLY() 
+}
+
+#define macro MULTIPLY() = takes(0) returns(0) {
+    // add 1
+    0x04 calldataload   // [n]
+    0x24 calldataload   // [n, m]
+    mul
+    
+    // TODO: check overflow
+
+
+
+    // store in memory
+    0x00 mstore         // []
+
+    // return
+    0x20 0x00 return
 }
