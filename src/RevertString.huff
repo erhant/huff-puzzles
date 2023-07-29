@@ -3,7 +3,9 @@
  *  REVERT_STRING HUFF EXERCISE
  *
  *
- *  When a transaction is being executed within a smart contract, based on the logic of that contract, it can revert if a preset condition is not met.
+ *  When a transaction is being executed within a smart contract, based on the 
+ *  logic of that contract, it can revert if a preset condition is not met.
+ *  
  *  They're 2 main ways to revert in solidity, 
  *  - using a string error message e,g (`require(x != 0, "Only values above 0");`)
  *  - reverting with a custom error e.g (`if(x == 0) revert OnlyValuesAbove0();`)
@@ -11,7 +13,28 @@
  *  The task is to write within the `MAIN` macro below, huff code that reverts (all the time) with the string error message `Only Huff`
 */
 
+// to convert a string to hexadecimals, I've used NodeJS with the following:
+// Buffer.from(string).toString('hex')
+//
+// for example: 
+// > Buffer.from("Hello World!").toString('hex')
+// '48656c6c6f20576f726c6421'
+// which is what we see at https://docs.huff.sh/tutorial/hello-world
+//
+// furthermore, to return a string we need to provide it's offset and length
+// 
+// the memory will look like the following:
+// 0x00 | offset:  0x20
+// 0x10 | length:  0x09 (9 bytes = 18 hex characters)
+// 0x20 | encoded: 0x4f6e6c792048756666 (zero right-padded)
+//
+// for right-padding we can use __RIGHTPAD
+// see https://docs.huff.sh/get-started/huff-by-example/#builtin-functions
 
 #define macro MAIN() = takes(0) returns(0) {
+    0x20 0x00 mstore // offset
+    0x09 0x20 mstore // length
+    __RIGHTPAD(0x4f6e6c792048756666) 0x40 mstore // encoded string
+    0x60 0x00 revert
     
 }

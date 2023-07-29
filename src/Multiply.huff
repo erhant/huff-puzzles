@@ -27,24 +27,29 @@
 }
 
 #define macro MULTIPLY() = takes(0) returns(0) {
-    // multiply
     0x04 calldataload   // [n]
     0x24 calldataload   // [n, m]
     dup2                // [n, m, n]
     dup2                // [n, m, n, m]
     mul                 // [n, m, k]    k = n*m
     swap2               // [k, m, n]
+
+    // check zero
     dup3                // [k, m, n, k]
+    dup1                // [k, m, n, k, k]
+    iszero              // [k, m, n, k, k == 0]
+    success jumpi
 
-    // check overflow
+    // check overflow (works for non-zero results)
+    pop                 // [k, m, n]
+    dup3                // [k, m, n, k]
     div                 // [k, m, k/n]
-    eq                  // [k, 1 or 0]
-    success jumpi       // 
+    eq                  // [k, m == k/n]
+    ret jumpi
 
-    // overflowed
     0x00 0x00 revert
 
-    success:
+    ret:
         0x00 mstore
         0x20 0x00 return
 }
