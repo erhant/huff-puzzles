@@ -5,6 +5,7 @@
     },
     // https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/images/folderIcons.png
     "material-icon-theme.folders.associations": {
-        "test-utils": "Utils"
+        "test-utils": "Utils",
+        "challenges": "Middleware"
     }
 }

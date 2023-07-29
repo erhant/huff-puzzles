@@ -1,0 +1,61 @@
+/// @notice Challenge #3
+/// @notice https://twitter.com/huff_language/status/1560750533811376128?s=20&t=MWz5PzwPRra8o_B7d14QSw
+/// @notice Exploit this contract and steal the Ether inside. It's deployed at `0xae7e201257f3f7918e9e8f2f3de998e3d75f7a1d` and has 0.1 ETH for you
+/// @notice Interface: deposit(), withdraw(), and setWithdrawer(address)
+
+// Slots
+#define constant OWNER_SLOT = 0x00
+#define constant WITHDRAWER_SLOT = 0x01
+#define constant LAST_DEPOSITOR_SLOT = 0x02
+
+// Deposit into contract
+#define macro DEPOSIT() = takes(0) returns(0) {
+  callvalue iszero error jumpi // revert if msg.value == 0
+  caller [LAST_DEPOSITOR_SLOT] sstore // store last depositor
+  stop
+  error:
+    0x00 0x00 revert
+}
+
+// Withdraw from contract
+#define macro WITHDRAW() = takes(0) returns(0) {
+  [WITHDRAWER_SLOT] sload // get withdrawer
+  caller eq iszero error jumpi // revert if caller != withdrawer
+
+  // transfer tokens
+  0x00 0x00 0x00 0x00 // fill stack with zeros
+  selfbalance caller gas // call params
+  call // send eth
+  stop
+  error:
+    0x00 0x00 revert
+}
+
+// Allow owner to set withdrawer
+#define macro SET_WITHDRAWER() = takes(0) returns(0) {
+  caller callvalue sload eq iszero error jumpi // revert if caller != owner
+  0x04 calldataload [WITHDRAWER_SLOT] sstore  // set new withdrawer
+  stop
+  error:
+    0x00 0x00 revert
+}
+
+// Constructor
+#define macro CONSTRUCTOR() = takes(0) returns(0) {
+  caller [OWNER_SLOT] sstore // set deployer as owner
+}
+
+// Main macro
+#define macro MAIN() = takes(0) returns(0) {
+  0x00 calldataload 0xE0 shr // get selector
+  dup1 0xd0e30db0 eq deposit jumpi
+  dup1 0x3ccfd60b eq withdraw jumpi
+  dup1 0x0d174c24 eq set_withdrawer jumpi
+
+  deposit:
+    DEPOSIT()
+  withdraw:
+    WITHDRAW()
+  set_withdrawer:
+    SET_WITHDRAWER()
+}

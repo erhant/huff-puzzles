@@ -1,0 +1,7 @@
+/// @notice Challenge #5
+/// @notice https://twitter.com/huff_language/status/1586401774927126528?s=20&t=Vs23QKhlkcSiDWyw3ESDGQ
+/// @notice We got another fun one for ya. Implement the most gas efficient contract that returns true 
+/// @notice if the calldata represents a signed message from the sender of the tx. 
+/// @notice If it isn't, do something that makes the transaction run out of gas.
+
+// TODO
