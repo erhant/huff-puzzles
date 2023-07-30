@@ -9,9 +9,43 @@
  *  NOTICE: The contract should revert when an unrecognized function is called
  */
 
- #define function makeContract() payable returns(address)
+#define function makeContract() payable returns(address)
 
+#define macro MAIN() = {
+    0x00 calldataload 0xE0 shr
+    __FUNC_SIG(makeContract) eq makeContract_func jumpi
 
- #define macro MAIN() = takes(0) returns(0) {
-    
- }
+    // unrecognized function
+    0x00 0x00 revert
+
+    makeContract_func:
+    // here is the code for a contract to return 0xcaffe
+    //
+    ///// INIT CODE /////
+    // PUSH1 0x0C
+    // PUSH1 0x0A
+    // PUSH1 0x00
+    // CODECOPY
+    // PUSH1 0x0C
+    // PUSH1 0x00
+    // RETURN
+    //
+    ///// RUNTIME CODE /////
+    // PUSH3 0x0caffe
+    // PUSH1 0x00
+    // MSTORE
+    // PUSH1 0x20
+    // PUSH1 0x00
+    // RETURN
+    //
+    // this yields the bytecode
+    0x600c600a600039600c6000f3620caffe60005260206000f3
+    0x00 mstore
+
+    // create contract with the bytecode
+    0x18 0x00 0x00 create
+
+    // return the address
+    0x00 mstore
+    0x20 0x00 return
+}

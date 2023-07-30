@@ -53,14 +53,12 @@
         
 
     balanceOf_func:
-        0x04 calldataload  // [a]    (address)
+        0x01000000000000000000000000
+        0x04 calldataload  // [a']   (address right-padded)
+        div                // [a]    (address) (same as `caller`)    
         sload              // [b]    (balance)
+
         0x00 mstore
         0x20 0x00 return
-
-}
-
-#define macro WITHDRAW() = {
-    0x04 calldataload  // [a]    (amount)
 
 }

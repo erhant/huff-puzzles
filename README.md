@@ -46,7 +46,7 @@ swap1  // [0x01, 0x02]
 -   [x] [Emitter](./src/Emitter.huff)
 -   [x] [Donations](./src/Donations.huff)
 -   [x] [SendEther](./src/SendEther.huff)
--   [ ] [BasicBank](./src/BasicBank.huff)
+-   [ ] [BasicBank](./src/BasicBank.huff) weird bug
 -   [ ] [Distribute](./src/Distributor.huff)
 -   [ ] [SimulateArray](./src/SimulateArray.huff)
 
