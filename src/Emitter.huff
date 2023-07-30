@@ -7,11 +7,35 @@
  *  NOTICE: The contract should revert when an unrecognized function is called
  */
 
- #define function value(uint256, uint256) payable returns()
- 
- #define event Value(uint256 indexed, uint256)
+#define function value(uint256, uint256) payable returns()
 
+#define event Value(uint256 indexed, uint256)
 
- #define macro MAIN() = takes(0) returns(0) {
-    
- }
+#define macro MAIN() = {
+    // function selectors
+    0x00 calldataload 0xE0 shr
+    __FUNC_SIG(value) eq value_func jumpi
+
+    // unrecognized function
+    0x00 0x00 revert
+
+    value_func:
+        // load arguments
+        0x04 calldataload       // [n]
+        0x24 calldataload       // [n, m]
+
+        // store second number in memory (not indexed)
+        0x00 mstore             // [n]
+
+        // first topic should be the event hash
+        // Huff has __EVENT_HASH builtin for this purpose
+        // see: https://docs.huff.sh/get-started/huff-by-example/#builtin-functions
+        __EVENT_HASH(Value)     // [h, n]
+
+        // the indexed argument (first one) is given as a topic
+        // the non-indexed argument (second one) is given in memory
+        //
+        // since there is only number in memory, we give size 0x20 to be
+        // returned from memory at offset 0x00
+        0x20 0x00 log2
+}

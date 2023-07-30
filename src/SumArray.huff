@@ -15,7 +15,7 @@
 // offset points to length, and length is followed by "length" many values
 // that make up the array
 
-#define macro MAIN() = takes(0) returns(0) {
+#define macro MAIN() = {
     // function selectors
     0x00 calldataload 0xE0 shr
     __FUNC_SIG(sumArray) eq continue jumpi

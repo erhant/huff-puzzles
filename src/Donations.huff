@@ -7,6 +7,26 @@
 
 #define function donated(address) payable returns(uint256)
 
-#define macro MAIN() = takes(0) returns(0) {
-    
+#define macro MAIN() = {
+    // function selectors
+    0x00 calldataload 0xE0 shr
+    __FUNC_SIG(donated) eq donated_func jumpi
+
+    // check callvalue
+    callvalue     // [v]
+    iszero        // [v == 0]
+    ret jumpi
+
+    // callvalue is not zero, add to donations of sender
+    caller sload   // [d]    d := store[caller]    (donations)
+    callvalue add  // [d + v]
+    caller sstore  // []
+
+    ret:
+        0x00 0x00 return
+
+    donated_func:
+        caller sload   // [d]    d := store[caller]    (donations)
+        0x00 mstore
+        0x20 0x00 return
 }

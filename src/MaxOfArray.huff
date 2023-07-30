@@ -9,6 +9,67 @@
 
 #define function maxOfArray(uint256[]) payable returns(uint256)
 
-#define macro MAIN() = takes(0) returns(0) {
-   
+#define macro MAIN() = {
+    0x00 calldataload 0xE0 shr
+    __FUNC_SIG(maxOfArray) eq iszero rev jumpi
+
+    // we expect a single array, no need to check for offset
+    // we know that the array length is at 0x24
+    0x24 calldataload   // [l]
+
+    // check if array is empty
+    dup1 iszero         // [l, l == 0]
+    rev jumpi
+
+    0x00       // [l, i]       i := index
+    0x00       // [l, i, m]    m := max (currently 0)
+    for_loop_begin:
+               // [l, i, m]
+
+        // loop condition (i < l)
+        dup3   // [l, i, m, l]
+        dup3   // [l, i, m, l, i]
+        lt     // [l, i, m, i < l]
+        iszero // [l, i, m, i >= l]
+        for_loop_end jumpi
+
+        // compute memory index
+        0x44   // [l, i, m, 0x44]
+        dup3   // [l, i, m, 0x44, i]
+        0x20   // [l, i, m, 0x44, i, 0x20]
+        mul    // [l, i, m, 0x44, i * 0x20]
+        add    // [l, i, m, k]    k := 0x44 + (i * 0x20)
+
+        // update max
+        calldataload // [l, i, m, a]    a := arr[i]
+        dup2         // [l, i, m, a, m]
+        dup2         // [l, i, m, a, m, a]
+        gt iszero    // [l, i, m, a, a <= m]
+        skip_update jumpi
+        swap1        // [l, i, m', m]    m' := a (max is updated)
+        skip_update:
+                     // [l, i, m', _]
+        pop          // [l, i, m]
+        
+        // increment index
+        swap1        // [l, m', i]
+        0x01         // [l, m', i, 1]
+        add          // [l, m', i']    i' := i + 1
+        swap1        // [l, i', m']
+    for_loop_begin jump
+    for_loop_end:
+
+          // [l, i, m]
+    swap2 // [m, i, l]
+    pop   // [m, i]
+    pop   // [m]
+
+    // mstore & return
+    0x00 mstore
+    0x20 0x00 return
+
+    // revert
+    rev:
+        0x00 0x00 revert
+
 }

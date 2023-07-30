@@ -9,8 +9,58 @@
  */
 
 #define function balanceOf(address) payable returns(uint256)
-#define function withdraw(uint256) payable returns()
+#define function withdraw(uint256)  payable returns()
 
 #define macro MAIN() = takes(0) returns(0) {
+    // function selectors
+    0x00 calldataload 0xE0 shr
+    dup1 __FUNC_SIG(withdraw)  eq withdraw_func  jumpi
+         __FUNC_SIG(balanceOf) eq balanceOf_func jumpi
+
+    // add callvalue to sender balance
+    caller sload   // [b]    b := store[caller]    (balance)
+    callvalue add  // [b + v]
+    caller sstore  // []
+    0x00 0x00 return
+
+    withdraw_func:
+        0x04 calldataload  // [a] (amount)
+
+        // check if there is enough balance
+        dup1               // [a, a]
+        caller sload       // [a, a, b]    b := store[caller]    (balance)
+        lt iszero          // [a, b >= a]
+        withdraw_func_cont jumpi
+        0x00 0x00 revert   // insufficient balance
+
+        withdraw_func_cont:
+        // remove amount from sender balance
+        dup1           // [a, a]
+        caller sload   // [a, a, b]    b := store[caller]    (balance)
+        callvalue sub  // [a, b - a]
+        caller sstore  // [a]
+
+        // send amount to caller
+        0x00 0x00 0x00 // [a, 0, 0, 0]
+        0x00           // [a, 0, 0, 0, 0]
+        swap4          // [0, 0, 0, 0, a]
+        caller         // [0, 0, 0, 0, a, c]
+        gas            // [0, 0, 0, 0, a, c, g]
+        call           // [s]    (success)
+        pop
+
+        0x00 0x00 return
+        
+
+    balanceOf_func:
+        0x04 calldataload  // [a]    (address)
+        sload              // [b]    (balance)
+        0x00 mstore
+        0x20 0x00 return
+
+}
+
+#define macro WITHDRAW() = {
+    0x04 calldataload  // [a]    (amount)
 
 }

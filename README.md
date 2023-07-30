@@ -17,7 +17,7 @@ swap1  // [0x02, 0x01]
        //        ^ top of stack
 ```
 
-Most people may prefer otherwise (also used in [Huff style-guide](https://docs.huff.sh/style-guide/overview/#code-comments)):
+Most people may prefer the other way around, as can also be seen in [Huff style-guide](https://docs.huff.sh/style-guide/overview/#code-comments):
 
 ```c
        // []
@@ -27,7 +27,7 @@ swap1  // [0x01, 0x02]
        //  ^ top of stack
 ```
 
-## Huff-Puzzles
+## [Huff Puzzles](https://github.com/RareSkills/huff-puzzles)
 
 -   [x] [CallValue](./src/CallValue.huff)
 -   [x] [CalldataLength](./src/CalldataLength.huff)
@@ -39,18 +39,18 @@ swap1  // [0x01, 0x02]
 -   [x] [SimpleStore](./src/SimpleStore.huff)
 -   [x] [RevertCustom](./src/RevertCustom.huff)
 -   [x] [RevertString](./src/RevertString.huff)
--   [ ] [SumArray](./src/SumArray.huff)
--   [ ] [Keccak](./src/Keccak.huff)
--   [ ] [MaxOfArray](./src/MaxOfArray.huff)
+-   [x] [SumArray](./src/SumArray.huff)
+-   [x] [Keccak](./src/Keccak.huff)
+-   [x] [MaxOfArray](./src/MaxOfArray.huff)
 -   [ ] [Create](./src/Create.huff)
--   [ ] [Emitter](./src/Emitter.huff)
--   [ ] [Donations](./src/Donations.huff)
--   [ ] [SendEther](./src/SendEther.huff)
+-   [x] [Emitter](./src/Emitter.huff)
+-   [x] [Donations](./src/Donations.huff)
+-   [x] [SendEther](./src/SendEther.huff)
 -   [ ] [BasicBank](./src/BasicBank.huff)
 -   [ ] [Distribute](./src/Distributor.huff)
 -   [ ] [SimulateArray](./src/SimulateArray.huff)
 
-## Huff-Challenges
+## [Huff Challenges](https://twitter.com/huff_language/status/1586425112135278592)
 
 -   [x] [Challenge1](./src/challenges/Challenge1.huff)
 -   [x] [Challenge2](./src/challenges/Challenge2.huff)
