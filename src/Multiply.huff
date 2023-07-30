@@ -16,17 +16,17 @@
     0x00 calldataload 0xE0 shr
 
     // jump to multiply if selector matches
-    __FUNC_SIG(multiply) eq multiply jumpi
+    __FUNC_SIG(multiply) eq multiply_func jumpi
 
     // revert otherwise
     0x00 0x00 revert
 
-    multiply:
+    multiply_func:
         // we could write the logic here, but lets use a macro :)
         MULTIPLY() 
 }
 
-#define macro MULTIPLY() = takes(0) returns(0) {
+#define macro MULTIPLY() = {
     0x04 calldataload   // [n]
     0x24 calldataload   // [n, m]
     dup2                // [n, m, n]
@@ -36,17 +36,21 @@
 
     // check zero
     dup3                // [k, m, n, k]
-    dup1                // [k, m, n, k, k]
-    iszero              // [k, m, n, k, k == 0]
-    success jumpi
+    iszero iszero       // [k, m, n, k != 0]
+    continue jumpi
+    pop                 // [k, m]
+    pop                 // [k]
+    ret jump
 
     // check overflow (works for non-zero results)
-    pop                 // [k, m, n]
+    continue:
+                        // [k, m, n]
     dup3                // [k, m, n, k]
     div                 // [k, m, k/n]
     eq                  // [k, m == k/n]
     ret jumpi
 
+    pop                 // []
     0x00 0x00 revert
 
     ret:

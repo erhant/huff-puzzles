@@ -4,4 +4,8 @@
 /// @notice if the calldata represents a signed message from the sender of the tx. 
 /// @notice If it isn't, do something that makes the transaction run out of gas.
 
-// TODO
+#define macro MAIN() = {
+  // TODO
+
+  // to run out of gas, we may use the cool trick of MLOAD -1
+}

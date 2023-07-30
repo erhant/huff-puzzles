@@ -15,7 +15,7 @@
 #define function foo() payable returns(uint256)
 #define function bar() payable returns(uint256)
 
-#define macro MAIN() = takes(0) returns(0) {
+#define macro MAIN() = {
     // function selectors
     0x00 calldataload 0xE0 shr
     dup1 __FUNC_SIG(foo) eq foo_func jumpi
@@ -29,9 +29,9 @@
         ret jump
 
     bar_func:
-        0x03
+    0x03
 
     ret:
-        0x00 mstore
-        0x20 0x00 return
+    0x00 mstore
+    0x20 0x00 return
 }

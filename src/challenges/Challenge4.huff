@@ -3,5 +3,5 @@
 /// @notice Write the minimal OR most efficient Huff smart contract that reverses all calldata (in bytes) that it receives
 
 #define macro MAIN() = {
-  // TODO 
+  // TODO
 }

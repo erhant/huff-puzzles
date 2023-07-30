@@ -1,9 +1,30 @@
 # Huff Puzzles & Challenges
 
-My solutions to RareSkills Huff puzzles & Huff challenges, see progress below. To test a puzzle named `foobar`, write the following command:
+My solutions to RareSkills Huff puzzles & Huff challenges, see progress below. To test a puzzle named `FooBar`, write the following command:
 
 ```sh
-forge test -vvv -mc foobar
+forge test -vvv -mc FooBar
+# or use less verbose -vv option
+```
+
+In my code-comments for these challenges, the top of the stack is rightmost element:
+
+```c
+       // []
+0x01   // [0x01]
+0x02   // [0x01, 0x02]
+swap1  // [0x02, 0x01]
+       //        ^ top of stack
+```
+
+Most people may prefer otherwise (also used in [Huff style-guide](https://docs.huff.sh/style-guide/overview/#code-comments)):
+
+```c
+       // []
+0x01   // [0x01]
+0x02   // [0x02, 0x01]
+swap1  // [0x01, 0x02]
+       //  ^ top of stack
 ```
 
 ## Huff-Puzzles
