@@ -3,7 +3,7 @@
 My solutions to RareSkills Huff puzzles & Huff challenges, see progress below. To test a puzzle named `FooBar`, write the following command:
 
 ```sh
-forge test -vvv -mc FooBar
+forge test -vvv --mc FooBar
 # or use less verbose -vv option
 ```
 
@@ -42,11 +42,11 @@ swap1  // [0x01, 0x02]
 -   [x] [SumArray](./src/SumArray.huff)
 -   [x] [Keccak](./src/Keccak.huff)
 -   [x] [MaxOfArray](./src/MaxOfArray.huff)
--   [ ] [Create](./src/Create.huff)
+-   [x] [Create](./src/Create.huff)
 -   [x] [Emitter](./src/Emitter.huff)
 -   [x] [Donations](./src/Donations.huff)
 -   [x] [SendEther](./src/SendEther.huff)
--   [ ] [BasicBank](./src/BasicBank.huff) weird bug
+-   [ ] [BasicBank](./src/BasicBank.huff)
 -   [ ] [Distribute](./src/Distributor.huff)
 -   [ ] [SimulateArray](./src/SimulateArray.huff)
 

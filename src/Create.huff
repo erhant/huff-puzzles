@@ -20,10 +20,11 @@
 
     makeContract_func:
     // here is the code for a contract to return 0xcaffe
+    // not optimized for PUSH1 0x00's and stuff
     //
     ///// INIT CODE /////
     // PUSH1 0x0C
-    // PUSH1 0x0A
+    // PUSH1 0x0C
     // PUSH1 0x00
     // CODECOPY
     // PUSH1 0x0C
@@ -39,11 +40,13 @@
     // RETURN
     //
     // this yields the bytecode
-    0x600c600a600039600c6000f3620caffe60005260206000f3
+    0x600c600c600039600c6000f3620caffe60005260206000f3
     0x00 mstore
 
     // create contract with the bytecode
-    0x18 0x00 0x00 create
+    // offset is 0x08 because when we write to memory a 0x18 length
+    // word, it will be right-padded with 0x08 zeros
+    0x18 0x08 0x00 create
 
     // return the address
     0x00 mstore
