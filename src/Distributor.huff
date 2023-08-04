@@ -10,9 +10,67 @@
  *  NOTICE: The contract should revert when an unrecognized function is called
  */
 
- #define function distribute(address[]) payable returns()
+#define function distribute(address[]) payable returns()
 
+#define macro MAIN() = {
+    // jump to revert if unrecognized function
+    0x00 calldataload 0xE0 shr
+    __FUNC_SIG(distribute) eq iszero rev jumpi
 
- #define macro MAIN() = takes(0) returns(0) {
-   
- }
+    // we expect a single array, no need to check for offset
+    // we know that the array length is at 0x24
+    0x24 calldataload   // [l]
+
+    // check if array is empty
+    dup1 iszero         // [l, l == 0]
+    rev jumpi
+
+    // calculate value to distribute for each address
+    dup1                // [l, l]
+    callvalue           // [l, l, c]
+    div                 // [l, v]    v := c / l    (value)
+
+    0x00 swap1          // [l, i, v]       i := index
+    for_loop_begin:
+               // [l, i, v]
+
+        // loop condition (i < l)
+        dup3   // [l, i, v, l]
+        dup3   // [l, i, v, l, i]
+        lt     // [l, i, v, i < l]
+        iszero // [l, i, v, i >= l]
+        for_loop_end jumpi
+
+        // compute memory index
+        0x44   // [l, i, v, 0x44]
+        dup3   // [l, i, v, 0x44, i]
+        0x20   // [l, i, v, 0x44, i, 0x20]
+        mul    // [l, i, v, 0x44, i * 0x20]
+        add    // [l, i, v, k]    k := 0x44 + (i * 0x20)
+        
+        // read address
+        calldataload // [l, i, v, a]
+        
+        // send to address
+        0x00 0x00 0x00    // [l, i, v, a, 0, 0, 0]
+        dup5              // [l, i, v, a, 0, 0, 0, v]
+        0x00              // [l, i, v, a, 0, 0, 0, v, 0]
+        swap5             // [l, i, v, 0, 0, 0, 0, v, a]
+        gas               // [l, i, v, 0, 0, 0, 0, v, a, g]
+        call              // [l, i, v, s]    (success)
+        pop               // [l, i, v]
+
+        // increment index
+        swap1        // [l, v, i]
+        0x01 add     // [l, v, i']    i' := i + 1
+        swap1        // [l, i', v]
+    for_loop_begin jump
+    for_loop_end:
+
+    pop pop pop
+    0x00 0x00 return
+
+    // revert
+    rev:
+        0x00 0x00 revert
+}

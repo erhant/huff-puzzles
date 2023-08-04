@@ -46,8 +46,8 @@ swap1  // [0x01, 0x02]
 -   [x] [Emitter](./src/Emitter.huff)
 -   [x] [Donations](./src/Donations.huff)
 -   [x] [SendEther](./src/SendEther.huff)
--   [ ] [BasicBank](./src/BasicBank.huff)
--   [ ] [Distribute](./src/Distributor.huff)
+-   [x] [BasicBank](./src/BasicBank.huff)
+-   [x] [Distribute](./src/Distributor.huff)
 -   [ ] [SimulateArray](./src/SimulateArray.huff)
 
 ## [Huff Challenges](https://twitter.com/huff_language/status/1586425112135278592)

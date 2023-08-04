@@ -23,7 +23,6 @@
 
         // no arguments or returns for our call
         0x00 0x00 0x00 0x00    // [0, 0, 0, 0]
-
         callvalue              // [0, 0, 0, 0, v]
         0x04 calldataload      // [0, 0, 0, 0, v, a]
         gas                    // [0, 0, 0, 0, v, a, g]

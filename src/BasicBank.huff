@@ -11,7 +11,7 @@
 #define function balanceOf(address) payable returns(uint256)
 #define function withdraw(uint256)  payable returns()
 
-#define macro MAIN() = takes(0) returns(0) {
+#define macro MAIN() = {
     // function selectors
     0x00 calldataload 0xE0 shr
     dup1 __FUNC_SIG(withdraw)  eq withdraw_func  jumpi
