@@ -37,7 +37,7 @@
         // remove amount from sender balance
         dup1           // [a, a]
         caller sload   // [a, a, b]    b := store[caller]    (balance)
-        callvalue sub  // [a, b - a]
+        sub            // [a, b - a]
         caller sstore  // [a]
 
         // send amount to caller
@@ -47,17 +47,14 @@
         caller         // [0, 0, 0, 0, a, c]
         gas            // [0, 0, 0, 0, a, c, g]
         call           // [s]    (success)
-        pop
+        pop            // []
 
         0x00 0x00 return
         
 
     balanceOf_func:
-        0x01000000000000000000000000
-        0x04 calldataload  // [a']   (address right-padded)
-        div                // [a]    (address) (same as `caller`)    
-        sload              // [b]    (balance)
-
+        0x04 calldataload  // [a]   (address)
+        sload              // [b]   (balance)
         0x00 mstore
         0x20 0x00 return
 

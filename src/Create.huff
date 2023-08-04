@@ -44,8 +44,8 @@
     0x00 mstore
 
     // create contract with the bytecode
-    // offset is 0x08 because when we write to memory a 0x18 length
-    // word, it will be right-padded with 0x08 zeros
+    // offset is 0x08 because when we write to memory a 0x18 length word
+    // it will be right-padded with 0x08 zeros
     0x18 0x08 0x00 create
 
     // return the address

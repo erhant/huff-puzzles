@@ -26,7 +26,8 @@
         0x00 0x00 return
 
     donated_func:
-        caller sload   // [d]    d := store[caller]    (donations)
+        0x04 calldataload  // [a]   (address)
+        sload              // [d]    d := store[caller]    (donations)
         0x00 mstore
         0x20 0x00 return
 }
