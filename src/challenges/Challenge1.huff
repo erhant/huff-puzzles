@@ -3,7 +3,7 @@
 /// @notice Write the minimal Huff code for a contract that returns the current block number if called.
 
 #define macro MAIN() = {
-  number // get block number
-  returndatasize mstore // store result, you could also use 0x00
-  0x20 returndatasize return // return
+  number          // get block number
+  0x00 mstore     // store result
+  0x20 0x0 return // return
 }

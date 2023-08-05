@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";

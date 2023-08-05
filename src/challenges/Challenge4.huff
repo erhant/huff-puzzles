@@ -27,10 +27,8 @@
         dup1 calldataload   // [l, i, c]
         REVERSE_WORD()      // [l, i, c'] 
         
-        // store in memory from the end
-        dup2                // [l, i, c', i] 
-        dup4                // [l, i, c', i, l]
-        sub                 // [l, i, c', l - i]
+        // store in memory, starting from the end
+        dup2 dup4 sub       // [l, i, c', l - i]
         [word] swap1 sub    // [l, i, c', l - i - w]
         mstore              // [l, i]
 
@@ -46,7 +44,7 @@
     // calldatasize due to the given problem
     calldatasize            // [cds]
 
-    // check the modulo to see if there is left-padded
+    // check the modulo to see if there is left-padding
     // we can skip zeros in the memory due to bad alignment
     // by giving offset equal to (word - (calldatasize % word))
     [word] calldatasize mod // [cds, cds % word]

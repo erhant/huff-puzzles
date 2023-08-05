@@ -33,6 +33,8 @@ swap1  // [0x01, 0x02]
        //  ^ top of stack
 ```
 
+We are using EVM version: Shangai so you can freely write `0x00` which will be converted to `PUSH0`.
+
 ## [Huff Puzzles](https://github.com/RareSkills/huff-puzzles)
 
 -   [x] [CallValue](./src/CallValue.huff)
@@ -61,5 +63,5 @@ swap1  // [0x01, 0x02]
 -   [x] [Challenge1](./src/challenges/Challenge1.huff)
 -   [x] [Challenge2](./src/challenges/Challenge2.huff)
 -   [x] [Challenge3](./src/challenges/Challenge3.huff)
--   [ ] [Challenge4](./src/challenges/Challenge4.huff)
--   [ ] [Challenge5](./src/challenges/Challenge5.huff)
+-   [x] [Challenge4](./src/challenges/Challenge4.huff)
+-   [x] [Challenge5](./src/challenges/Challenge5.huff)

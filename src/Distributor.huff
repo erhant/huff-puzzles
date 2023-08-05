@@ -10,6 +10,8 @@
  *  NOTICE: The contract should revert when an unrecognized function is called
  */
 
+// NOTE: the test contract is called Distrbiute, not Distributor
+
 #define function distribute(address[]) payable returns()
 
 #define macro MAIN() = {

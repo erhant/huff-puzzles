@@ -5,7 +5,54 @@
 /// @notice If it isn't, do something that makes the transaction run out of gas.
 
 #define macro MAIN() = {
-  // TODO
+    /// signature starts at slot 0 with 65 bytes (32 + 32 + 1) for (r, s, v)
+    /// message hash is 32 bytes, so total must be 97 bytes (0x61)
 
-  // to run out of gas, we may use the cool trick of MLOAD -1
+    // check calldata length
+    0x61 calldatasize eq iszero killgas jumpi
+
+    /// we will use ecrecover precompile (https://www.evm.codes/precompiled#0x01?fork=shanghai)
+    /// it expect inputs as (hash, v, r, s) so we will put these into memory as required
+    
+    // parse message hash
+    0x41 calldataload   // [h]    (hash)
+    0x00 mstore         // []
+
+    // parse v
+    0x40 calldataload   // [v']   (v but with bytes belonging to hash)
+    0xF8 shr            // [v]    (reduced to a byte)
+    0x20 mstore         // []
+
+    // parse r
+    0x00 calldataload   // [r]
+    0x40 mstore         // []
+
+    // parse s
+    0x20 calldataload   // [s]
+    0x60 mstore         // []
+
+    // call ecrecover
+    0x20 // 1 * 32-byte return size
+    0x00 // offset 0 for return
+    0x80 // 4 * 32-byte args size
+    0x00 // offset 0 for args
+    0x01 // ecrecover address
+    gas  // forward all gas
+    staticcall          // [success]
+    iszero killgas jumpi
+
+    // check returned address
+    0x00 mload          // [r]
+    caller eq           // [r == caller]
+    iszero killgas jumpi
+
+    // return true (i.e. 0x01)
+    0x01 0x00 mstore
+    0x20 0x00 return
+
+    killgas:
+        // to run out of gas, we may use a cool trick
+        // "load from a memory address far far away..."
+        // see: https://twitter.com/0xkarmacoma/status/1586155091282653184
+        0x00 not mload
 }
