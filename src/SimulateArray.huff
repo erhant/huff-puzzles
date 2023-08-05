@@ -55,8 +55,7 @@
     outOfBounds_error:
         __ERROR(OutOfBounds) 0x00 mstore
         0x04 0x00 revert
-
-   zeroArray_error:
+    zeroArray_error:
         pop
         __ERROR(ZeroArray) 0x00 mstore
         0x04 0x00 revert

@@ -2,6 +2,118 @@
 /// @notice https://twitter.com/huff_language/status/1583894073487654913?s=20&t=_ibl7MaTLT-inxITiVq_HQ
 /// @notice Write the minimal OR most efficient Huff smart contract that reverses all calldata (in bytes) that it receives
 
+// Word-length, just for readability purposes
+#define constant word = 0x20
+
 #define macro MAIN() = {
-  // TODO
+    // check if there is any calldata
+    calldatasize cont jumpi
+    0x00 0x00 return
+    cont: // continue
+
+    // calculate word count
+    [word] calldatasize div // [cds / 16]
+    0x01 add                // [l]    l := Math.floor(cds / 16) + 1
+
+    // start processing chunks
+    0x00                    // [l, i]    (index)
+    for_loop_begin:         // [l, i]
+        // loop condition (i < l)
+        dup2 dup2 lt iszero // [l, i, l >= i]
+        for_loop_end jumpi
+
+        // read & reverse chunk
+        dup1 calldataload   // [l, i, c]
+        REVERSE_WORD()      // [l, i, c'] 
+        
+        // store in memory from the end
+        dup2                // [l, i, c', i] 
+        dup4                // [l, i, c', i, l]
+        sub                 // [l, i, c', l - i]
+        mstore              // [l, i]
+
+        // increment index
+        [word] add          // [l, i']
+    for_loop_begin jump
+    for_loop_end:
+
+    // get rid of loop stuff
+    pop pop                 // []
+
+    // we will return from memory a chunk as long as the
+    // calldatasize due to the given problem
+    calldatasize            // [cds]
+
+    // check the modulo to see if there is left-padded
+    // we can skip zeros in the memory due to bad alignment
+    // by giving offset equal to calldatasize % 16
+    [word] calldatasize mod // [cds, cds % 16]
+    
+    return
+}
+
+// We use the trick described at https://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
+// as suggested in the Twitter post: https://twitter.com/recmo/status/1583944733306458113?s=20
+// much thanks to Kaden's solution: https://twitter.com/0xkarmacoma/status/1584239664310779904
+#define macro REVERSE_WORD() = takes (1) returns (1) {
+    REVERSE_8()
+    REVERSE_16()
+    REVERSE_32()
+    REVERSE_64()
+    REVERSE_128()
+}
+#define macro REVERSE(left, right, shift) = takes (1) returns (1) {
+    // takes:          [n]
+
+    dup1            // [n, n]
+    <left> and      // [n, mL]     (masked left)
+    <shift> shl     // [n, smL]    (shifted & masked Left)
+
+    swap1           // [smL, n]
+    <right> and     // [smL, mR]   (masked right)
+    <shift> shr     // [smL, smR]  (shifted & masked Right)
+    or              // [n']
+    
+    // returns:        [n']
+}
+
+// flips every consecutive 8-bit pair
+#define macro REVERSE_8() = takes (1) returns (1) {
+    REVERSE(
+        0x00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff,
+        0xff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00,
+        0x08
+    )
+}
+// flips every consecutive 16-bit pair
+#define macro REVERSE_16() = takes (1) returns (1) {
+    REVERSE(
+        0x0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff,
+        0xffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000,
+        0x10
+    )
+}
+// flips every consecutive 32-bit pair
+#define macro REVERSE_32() = takes (1) returns (1) {
+    REVERSE(
+        0x00000000ffffffff00000000ffffffff00000000ffffffff00000000ffffffff,
+        0xffffffff00000000ffffffff00000000ffffffff00000000ffffffff00000000,
+        0x20
+    )
+}
+// flips every consecutive 64-bit pair
+#define macro REVERSE_64() = takes (1) returns (1) {
+    REVERSE(
+        0x0000000000000000ffffffffffffffff0000000000000000ffffffffffffffff,
+        0xffffffffffffffff0000000000000000ffffffffffffffff0000000000000000,
+        0x40
+    )
+}
+// flips every consecutive 128-bit pair
+#define macro REVERSE_128() = takes (1) returns (1) {
+    REVERSE(
+        0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff,
+        0xffffffffffffffffffffffffffffffff00000000000000000000000000000000,
+        0x80
+    )
 }

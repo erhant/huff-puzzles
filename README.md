@@ -7,6 +7,12 @@ forge test -vvv --mc FooBar
 # or use less verbose -vv option
 ```
 
+You can also play around with the runtime bytecode at [evm.codes](https://www.evm.codes/playground); to get the runtime bytecode you can do:
+
+```sh
+huffc <path> -r
+```
+
 In my code-comments for these challenges, the top of the stack is rightmost element:
 
 ```c
