@@ -24,6 +24,9 @@
 #define error OutOfBounds()
 #define error ZeroArray()
 
+// a cool looking storage slot to store the array length
+#define constant LEN_PTR = 0xffffffff00000001ffffffff00000001ffffffff00000001ffffffff00000001
+
 #define macro MAIN() = {
     // function selectors
     0x00 calldataload 0xE0 shr
@@ -54,74 +57,87 @@
         0x04 0x00 revert
 
    zeroArray_error:
+        pop
         __ERROR(ZeroArray) 0x00 mstore
         0x04 0x00 revert
 }
 
 #define macro PUSH() = {
-    LEN()             // [i]
+    LEN()             // [l]
 
     // store value
-    0x04 calldataload // [i, v]
-    dup2              // [i, v, i]
-    sstore            // [i]
+    0x04 calldataload // [l, v]
+    dup2              // [l, v, l]
+    sstore            // [l]
 
-    // increment index
-    0x01 add          // [i+1]
-    0x00 sstore
+    // increment length
+    0x01 add          // [l+1]
+    [LEN_PTR] sstore  // []
 
     0x00 0x00 return
 }
 
 #define macro POP() = {
-    LEN()             // [i]
+    LEN()             // [l]
 
-    // decrement index
-    0x01 swap1        // [1, i]
-    sub               // [i-1]
-    0x00 sstore       // []
-
-    // revert if zero
-    dup1 iszero       // [i, i, i == 0]
+    // revert if length is zero
+    dup1 iszero       // [l, l == 0]
     zeroArray_error jumpi
 
+    // decrement length
+    0x01 swap1        // [1, l]
+    sub dup1          // [l-1, l-1]
+    [LEN_PTR] sstore  // [l-1]
+
     // load value
-    sload             // [i, v]
-    0x00 mstore       // [i]
+    sload             // [v]
+    0x00 mstore       // []
 
-    
-
-    // returns `v`
+    // returns value
     0x20 0x00 return
 }
 
 #define macro READ() = {
-    PTR()         // [i]
+    // load index
+    0x04 calldataload // [i]
+    CHECK_VALID()     // [i]    (i < length)
 
-    // check if valid
-    // load
-
-    // return `v`
-    sload         // [v]
-    0x00 mstore   // []
+    // return value
+    sload             // [v]
+    0x00 mstore       // []
     0x20 0x00 return
 }
 
 #define macro LENGTH() = {
-    LEN()         // [i]
+    LEN()         // [l]
     0x00 mstore   // []
     0x20 0x00 return
 }
 
 #define macro WRITE() = {
-    
+    // load value argument
+    0x24 calldataload // [v]
+
+    // load index
+    0x04 calldataload // [v, i]
+    CHECK_VALID()     // [v, i]    (i < length)
+
+    // store value
+    sstore            // []
+
+    0x00 0x00 return
 }
 
 #define macro LEN() = returns(1) {
-    // length is stored in slot 0
-    0x00 sload
+    [LEN_PTR] sload   // [l]
+    // returns:          [l]
 }
 
-#define macro CHECK_VALID() = {
-    0x00 sload
+#define macro CHECK_VALID() = takes(1) returns(1) {
+    // takes:     [i]
+    dup1       // [i, i]
+    LEN()      // [i, i, l]
+    gt iszero  // [i, l <= i]
+    outOfBounds_error jumpi
+    // returns:   [i]
 }
