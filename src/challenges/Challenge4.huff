@@ -12,14 +12,15 @@
     cont: // continue
 
     // calculate word count
-    [word] calldatasize div // [cds / 16]
-    0x01 add                // [l]    l := Math.floor(cds / 16) + 1
+    [word] calldatasize div // [cds / w]
+    0x01 add                // [l']    l' :=  Math.floor(cds / w) + 1
+    [word] mul              // [l]     l  := (Math.floor(cds / w) + 1) * w
 
     // start processing chunks
     0x00                    // [l, i]    (index)
     for_loop_begin:         // [l, i]
         // loop condition (i < l)
-        dup2 dup2 lt iszero // [l, i, l >= i]
+        dup2 dup2 lt iszero // [l, i, i >= l]
         for_loop_end jumpi
 
         // read & reverse chunk
@@ -30,6 +31,7 @@
         dup2                // [l, i, c', i] 
         dup4                // [l, i, c', i, l]
         sub                 // [l, i, c', l - i]
+        [word] swap1 sub    // [l, i, c', l - i - w]
         mstore              // [l, i]
 
         // increment index
@@ -46,9 +48,9 @@
 
     // check the modulo to see if there is left-padded
     // we can skip zeros in the memory due to bad alignment
-    // by giving offset equal to calldatasize % 16
-    [word] calldatasize mod // [cds, cds % 16]
-    
+    // by giving offset equal to (word - (calldatasize % word))
+    [word] calldatasize mod // [cds, cds % word]
+    [word] sub              // [cds, word - (cds & word)]
     return
 }
 
@@ -73,7 +75,7 @@
     <right> and     // [smL, mR]   (masked right)
     <shift> shr     // [smL, smR]  (shifted & masked Right)
     or              // [n']
-    
+
     // returns:        [n']
 }
 
